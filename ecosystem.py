@@ -72,6 +72,7 @@ class Oekosystem:
                 if self.echo == True and flag == True:
                     flag = False
                     gamerecorder.print_out()
+            self.minimutate()
             if self.echo == True and round % 10 == 0:
                 print(str(score) + " " + str(round))
             round += 1
@@ -88,6 +89,10 @@ class Oekosystem:
         if v[2] == v[4] and v[4] == v[6] and v[4] != 0:
             return True
         return False
+
+    def minimutate(self):
+        for agent in self.agents:
+            agent.mutation(1, 2, 5)
 
 
 oko = Oekosystem()
