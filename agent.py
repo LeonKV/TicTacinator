@@ -94,12 +94,13 @@ class Agent:
             self.weights2[x][y] += a
 
     def mutation(self, a, b, c):
-        for i in range(a):
+        for _ in range(a):
             self.delete()
-        for i in range(b):
+        for _ in range(b):
             self.reset()
-        for i in range(c):
+        for _ in range(c):
             self.change()
+        self.normalisation()
 
 # agent = Agent()
 # agent.normalisation()

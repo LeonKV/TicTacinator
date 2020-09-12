@@ -45,7 +45,6 @@ class Oekosystem:
             for gamenumber in range(50):
                 if round % 100 == 0 and gamenumber == 0:
                     flag = True
-                    print("HEYY")
                     gamerecorder = game.Game()
                 max = self.agents.pop(0)
                 min = self.agents.pop(0)
