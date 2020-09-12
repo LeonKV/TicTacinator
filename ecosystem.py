@@ -1,4 +1,5 @@
 import agent
+import agent2
 import numpy
 import random
 import game
@@ -7,8 +8,8 @@ class Oekosystem:
 
     def __init__(self):
         self.agents = []
-        for _ in range(100):
-            self.agents.append(agent.Agent())
+        for _ in range(1000):
+            self.agents.append(agent2.Agent2())
         self.echo = True;
 
     def deathmatch(self, max, min):
@@ -42,7 +43,7 @@ class Oekosystem:
         while(True):
             score = [0, 0, 0]
             random.shuffle(self.agents)
-            for gamenumber in range(50):
+            for gamenumber in range(500):
                 if round % 100 == 0 and gamenumber == 0:
                     flag = True
                     gamerecorder = game.Game()
@@ -54,14 +55,14 @@ class Oekosystem:
                     result = self.play(max, min)
                 if result == 1:
                     self.agents.append(max)
-                    mutierter_agent = agent.Agent(max)
-                    mutierter_agent.mutation(1, 5, 15)
+                    mutierter_agent = agent2.Agent2(max)
+                    mutierter_agent.mutation(10, 10, 20)
                     score[0] += 1
                     self.agents.append(mutierter_agent)
                 elif result == -1:
                     self.agents.append(min)
-                    mutierter_agent = agent.Agent(min)
-                    mutierter_agent.mutation(1, 5, 15)
+                    mutierter_agent = agent2.Agent2(min)
+                    mutierter_agent.mutation(10, 10, 20)
                     self.agents.append(mutierter_agent)
                     score[1] += 1
                 else:
