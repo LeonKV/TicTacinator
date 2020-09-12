@@ -4,8 +4,10 @@ import random
 
 class Agent:
 
-    def __init__(self, agent = None):
-        if agent == None:
+    def __init__(self, agent=None):
+        if agent is None:
+            self.age = 0
+            self.score = 0
             ran = random.Random()
             self.weights1 = numpy.eye(9)
             for i in range(9):
@@ -17,6 +19,8 @@ class Agent:
                 for j in range(9):
                     self.weights2[i][j] = ran.uniform(-1, 1)
         else:
+            self.score = 0
+            self.age = 0
             self.weights1 = agent.weights1.copy()
             self.weights2 = agent.weights2.copy()
 
