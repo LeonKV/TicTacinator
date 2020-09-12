@@ -55,13 +55,13 @@ class Oekosystem:
                 if result == 1:
                     self.agents.append(max)
                     mutierter_agent = agent.Agent(max)
-                    mutierter_agent.mutation(5, 10, 15)
+                    mutierter_agent.mutation(1, 5, 15)
                     score[0] += 1
                     self.agents.append(mutierter_agent)
                 elif result == -1:
                     self.agents.append(min)
                     mutierter_agent = agent.Agent(min)
-                    mutierter_agent.mutation(5, 10, 15)
+                    mutierter_agent.mutation(1, 5, 15)
                     self.agents.append(mutierter_agent)
                     score[1] += 1
                 else:
