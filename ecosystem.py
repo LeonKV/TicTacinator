@@ -1,7 +1,7 @@
 import agent
 import numpy
 import random
-
+import game
 
 class Oekosystem:
 
@@ -9,6 +9,7 @@ class Oekosystem:
         self.agents = []
         for _ in range(100):
             self.agents.append(agent.Agent())
+        self.echo = True;
 
     def deathmatch(self, max, min):
         # [max wins, min wins, draw]
@@ -18,37 +19,47 @@ class Oekosystem:
             score[winner] += 1
         return score
 
-    def play(self, max, min):
+    def play(self, max, min, gamerecorder = None):
         board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
         for i in range(9):
             if i % 2 == 0:
                 board[max.move_max(board)] = 1
+                if gamerecorder != None:
+                    gamerecorder.add_move(board.copy())
                 if self.winner(board):
                     return 1
             else:
                 board[min.move_min(board)] = -1
+                if gamerecorder != None:
+                    gamerecorder.add_move(board.copy())
                 if self.winner(board):
                     return -1
         return 0
 
-
-
-
     def main(self):
-        for _ in range(1000):
+        round = 0
+        flag = False
+        while(True):
             score = [0, 0, 0]
             random.shuffle(self.agents)
-            for _ in range(50):
+            for gamenumber in range(50):
+                if round % 100 == 0 and gamenumber == 0:
+                    flag = True
+                    print("HEYY")
+                    gamerecorder = game.Game()
                 max = self.agents.pop(0)
                 min = self.agents.pop(0)
-                result = self.play(max, min)
+                if flag:
+                    result = self.play(max, min, gamerecorder)
+                else:
+                    result = self.play(max, min)
                 if result == 1:
                     self.agents.append(max)
                     mutierter_agent = agent.Agent(max)
                     mutierter_agent.mutation(5, 10, 15)
                     score[0] += 1
                     self.agents.append(mutierter_agent)
-                if result == -1:
+                elif result == -1:
                     self.agents.append(min)
                     mutierter_agent = agent.Agent(min)
                     mutierter_agent.mutation(5, 10, 15)
@@ -58,7 +69,12 @@ class Oekosystem:
                     self.agents.append(max)
                     self.agents.append(min)
                     score[2] += 1
-            print(score)
+                if self.echo == True and flag == True:
+                    flag = False
+                    gamerecorder.print_out()
+            if self.echo == True and round % 10 == 0:
+                print(str(score) + " " + str(round))
+            round += 1
 
     def winner(self, v):
         for i in range(3):
