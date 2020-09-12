@@ -7,9 +7,46 @@ class Oekosystem:
 
     def __init__(self):
         self.agents = []
+        # agents play tictactoe
         for _ in range(100):
             self.agents.append(agent.Agent())
 
+    # main trainings function
+    def main(self):
+        for i in range(100000):
+            # [X wins, O wins, draw]
+            score = [0, 0, 0]
+            random.shuffle(self.agents)
+            # 50 matches of tictactoe
+            for _ in range(50):
+                # two agents are playing against each other
+                max = self.agents.pop(0)
+                min = self.agents.pop(0)
+                result = self.play(max, min)
+                # max wins
+                if result == 1:
+                    self.agents.append(max)
+                    mutierter_agent = agent.Agent(max)
+                    mutierter_agent.mutation(5, 10, 15)
+                    self.agents.append(mutierter_agent)
+                    score[0] += 1
+                #min wins
+                elif result == -1:
+                    self.agents.append(min)
+                    mutierter_agent = agent.Agent(min)
+                    mutierter_agent.mutation(5, 10, 15)
+                    self.agents.append(mutierter_agent)
+                    score[1] += 1
+                # draw
+                else:
+                    self.agents.append(max)
+                    self.agents.append(min)
+                    score[2] += 1
+            if i % 1000 == 0 or i % 1000 == 1 or i % 1000 == 2 or i % 1000 == 3 or i % 1000 == 4:
+                print('Runde: ' + str(i) + 'Score: ' + str(score))
+                # print(self.agents[0].weights1)
+
+    # useless
     def deathmatch(self, max, min):
         # [max wins, min wins, draw]
         score = [0, 0, 0]
@@ -30,35 +67,6 @@ class Oekosystem:
                 if self.winner(board):
                     return -1
         return 0
-
-
-
-
-    def main(self):
-        for _ in range(1000):
-            score = [0, 0, 0]
-            random.shuffle(self.agents)
-            for _ in range(50):
-                max = self.agents.pop(0)
-                min = self.agents.pop(0)
-                result = self.play(max, min)
-                if result == 1:
-                    self.agents.append(max)
-                    mutierter_agent = agent.Agent(max)
-                    mutierter_agent.mutation(5, 10, 15)
-                    score[0] += 1
-                    self.agents.append(mutierter_agent)
-                if result == -1:
-                    self.agents.append(min)
-                    mutierter_agent = agent.Agent(min)
-                    mutierter_agent.mutation(5, 10, 15)
-                    self.agents.append(mutierter_agent)
-                    score[1] += 1
-                else:
-                    self.agents.append(max)
-                    self.agents.append(min)
-                    score[2] += 1
-            print(score)
 
     def winner(self, v):
         for i in range(3):
