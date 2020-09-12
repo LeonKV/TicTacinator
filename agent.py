@@ -20,8 +20,35 @@ class Agent:
             self.weights1 = agent.weights1.copy()
             self.weights2 = agent.weights2.copy()
 
-    def move(self, input):
-        return numpy.matmul(self.weights2, (numpy.matmul(self.weights1, input)))
+    def move_max(self, input):
+        options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, input)))
+        index = 0
+        max = -1000
+
+        for i in range(9):
+            if input[i] == 0:
+                if options[i] > max:
+                    max = options[i]
+
+        for i in options:
+            if i == max:
+                return index
+            index += 1
+
+    def move_min(self, input):
+        options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, input)))
+        index = 0
+        min = 1000
+
+        for i in range(9):
+            if input[i] == 0:
+                if options[i] < min:
+                    min = options[i]
+
+        for i in options:
+            if i == min:
+                return index
+            index += 1
 
     def normalisation(self):
         for i in range(9):
@@ -73,11 +100,10 @@ class Agent:
             self.reset()
         for i in range(c):
             self.change()
-        return agent
 
-agent = Agent()
-agent.normalisation()
-agent2 = Agent(agent)
-agent2.mutation(5, 10, 15)
-print(agent2.move([1, 0, 0, -1, 1, 0, -1, 0, 0]) == agent.move([1, 0, 0, -1, 1, 0, -1, 0, 0]))
-agent.reset()
+# agent = Agent()
+# agent.normalisation()
+# agent2 = Agent(agent)
+# agent2.mutation(5, 10, 15)
+# print(agent2.moveX([1, 0, 0, -1, 1, 0, -1, 0, 0]))
+# agent.reset()
