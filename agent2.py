@@ -13,6 +13,7 @@ class Agent2:
         self.p_1 = 30
         self.n_2 = 30
         self.p_2 = 18
+        self.age = 0
         if agent == None:
             ran = random.Random()
             l = []

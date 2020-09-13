@@ -87,12 +87,13 @@ class Oekosystem:
             round += 1
 
     def liga(self):
-        for i in range(1000):
+        season = 0
+        while(True):
             all_score = [0, 0, 0]
-            print("\n\n\n Saison: " + str(i))
+
             for agentss in self.agents:
                 agentss.score = 0
-            for j in range(20):
+            for j in range(10):
                 random.shuffle(self.agents)
                 for k in range(50):
                     # two agents are playing against each other
@@ -109,14 +110,22 @@ class Oekosystem:
                         all_score[2] += 1
 
             self.agents.sort(key=lambda x: x.score)
-            for agentss in self.agents:
-                agentss.age += 1
-                print("Score: " + str(agentss.score) + "   Age: " + str(agentss.age))
-            print("\n Season Score: " + str(all_score))
+            for i in range(len(self.agents)):
+                self.agents[i].age += 1
+
+            if season % 10 == 0:
+                print("\n\n\n Saison: " + str(season))
+                gamerecorder = game.Game()
+                self.play(self.agents[99], self.agents[98], gamerecorder)
+                gamerecorder.print_out()
+                print("Score: " + str(self.agents[99].score) + "   Age: " + str(self.agents[99].age))
+                print("\n Season Score: " + str(all_score))
             # kick noobs
-            for s in range(int(len(self.agents) / 2)):
-                self.agents[s] = agent.Agent(self.agents[50 + s])
+            for s in range(int(len(self.agents) * 0.2)):
+                self.agents[s] = agent2.Agent2(self.agents[len(self.agents) - s - 1])
                 self.agents[s].mutation(5, 5, 15)
+
+            season += 1
 
     def winner(self, v):
         for i in range(3):
@@ -137,4 +146,4 @@ class Oekosystem:
 
 
 oko = Oekosystem()
-oko.main()
+oko.liga()
