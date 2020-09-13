@@ -46,7 +46,7 @@ class Oekosystem:
             scorestring = ""
             # random.shuffle(self.agents)
             for gamenumber in range(50):
-                if round % 100 == 0 and gamenumber %10 == 0:
+                if round % 100 == 0 and gamenumber == 0:
                     flag = True
                     gamerecorder = game.Game()
                 a = random.randint(0, 99 - 2 * gamenumber)
@@ -60,14 +60,14 @@ class Oekosystem:
                 if result == 1:
                     scorestring += "X"
                     mutierter_agent = agent2.Agent2(maxi)
-                    #mutierter_agent.mutation(1, 1, 3)
+                    mutierter_agent.mutation(1, 10, 30)
                     score[0] += 1
                     self.waiting.append(mutierter_agent.copy())
                     self.waiting.append(maxi.copy())
                 elif result == -1:
                     scorestring += "O"
                     mutierter_agent = agent2.Agent2(mini)
-                    #mutierter_agent.mutation(1, 1, 3)
+                    mutierter_agent.mutation(1, 10, 30)
                     self.waiting.append(mutierter_agent.copy())
                     self.waiting.append(mini.copy())
                     score[1] += 1
@@ -78,16 +78,11 @@ class Oekosystem:
                     score[2] += 1
                 if self.echo == True and flag == True:
                     flag = False
-                    #gamerecorder.print_out()
-                    print(str(maxi.id) + " vs. " + str(mini.id))
-                maxi = None
-                mini = None
-            if self.agents != []:
-                print("AHHHHHHHHHHHHH")
+                    gamerecorder.print_out()
             self.agents = self.waiting.copy()
             self.waiting = []
             self.minimutate()
-            if self.echo == True and round % 1 == 0:
+            if self.echo == True and round % 10 == 0:
                 print(str(score) + " " + str(round) + " " + scorestring)
             round += 1
 
@@ -137,7 +132,8 @@ class Oekosystem:
         return False
 
     def minimutate(self):
-        self.agents[0].mutation(100, 150, 150)
+        for agent in self.agents:
+            agent.mutation(2, 3, 5)
 
 
 oko = Oekosystem()

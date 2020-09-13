@@ -1,5 +1,6 @@
 import numpy
 import random
+import copy
 
 
 class Agent2:
@@ -30,8 +31,8 @@ class Agent2:
             self.normalisation()
 
         else:
-            self.weights1 = agent.weights1.copy()
-            self.weights2 = agent.weights2.copy()
+            self.weights1 = copy.deepcopy(agent.weights1)
+            self.weights2 = copy.deepcopy(agent.weights2)
 
     def move_x(self, input):
         options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, self.convert_s2t(input))))
