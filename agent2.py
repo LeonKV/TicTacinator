@@ -3,12 +3,15 @@ import random
 
 
 class Agent2:
+    count = 0
 
     def __init__(self, agent = None):
-        self.n_1 = 18
-        self.p_1 = 9
-        self.n_2 = 9
-        self.p_2 = 9
+        Agent2.count += 1
+        self.id = Agent2.count
+        self.n_1 = 27
+        self.p_1 = 30
+        self.n_2 = 30
+        self.p_2 = 18
         if agent == None:
             ran = random.Random()
             l = []
@@ -30,27 +33,34 @@ class Agent2:
             self.weights1 = agent.weights1.copy()
             self.weights2 = agent.weights2.copy()
 
-    def move_max(self, input):
-        options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, self.convert_s2d(input))))
+    def move_x(self, input):
+        options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, self.convert_s2t(input))))
         index = 0
         max = -1000
 
         for i in range(9):
             if input[i] == 0:
-                if options[i] > max:
+                if options[2 * i] > max:
                     max = options[i]
                     index = i
         return index
 
-    def move_min(self, input):
-        options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, self.convert_s2d(input))))
+    def copy(self):
+        copy_agent = Agent2()
+        copy_agent.weights1 = self.weights1.copy()
+        copy_agent.weights2 = self.weights2.copy()
+        copy_agent.id = self.id
+        return copy_agent
+
+    def move_o(self, input):
+        options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, self.convert_s2t(input))))
         index = 0
-        min = 1000
+        max = -1000
 
         for i in range(9):
             if input[i] == 0:
-                if options[i] < min:
-                    min = options[i]
+                if options[2 * i + 1] > max:
+                    max = options[i]
                     index = i
         return index
 
@@ -128,18 +138,22 @@ class Agent2:
                 vnew.append(0)
         return vnew
 
-    def convert_s2d(self, v):
+    def convert_s2t(self, v):
         vnew = []
         for i in range(9):
             if v[i] == 1:
                 vnew.append(1)
                 vnew.append(0)
+                vnew.append(0)
+
             if v[i] == -1:
                 vnew.append(0)
                 vnew.append(1)
+                vnew.append(0)
             if v[i] == 0:
                 vnew.append(0)
                 vnew.append(0)
+                vnew.append(1)
         return vnew
 
 agent = Agent2()
