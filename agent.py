@@ -55,6 +55,8 @@ class Agent:
             sum = 0
             for j in range(9):
                 sum += abs(self.weights1[i][j])
+            if sum == 0:
+                sum = 1
             for j in range(9):
                 self.weights1[i][j] /= sum
 
@@ -62,6 +64,8 @@ class Agent:
             sum = 0
             for j in range(9):
                 sum += abs(self.weights2[i][j])
+            if sum == 0:
+                sum = 1
             for j in range(9):
                 self.weights2[i][j] /= sum
 
