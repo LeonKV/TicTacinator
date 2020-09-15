@@ -1,25 +1,17 @@
 import agent
-import agent2
-import numpy
 import random
 import game
+
 
 class Oekosystem:
 
     def __init__(self):
         self.agents = []
         self.waiting = []
-        for _ in range(100):
-            self.agents.append(agent2.Agent2())
+        for _ in range(1000):
+            self.agents.append(agent.Agent())
+        # self.neo = player.Neo()
         self.echo = True
-
-    def deathmatch(self, max, min):
-        # [max wins, min wins, draw]
-        score = [0, 0, 0]
-        for _ in range(5):
-            winner = self.play(max, min)
-            score[winner] += 1
-        return score
 
     def play(self, max, min, gamerecorder = None):
         board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -59,14 +51,14 @@ class Oekosystem:
                     result = self.play(maxi, mini)
                 if result == 1:
                     scorestring += "X"
-                    mutierter_agent = agent2.Agent2(maxi)
+                    mutierter_agent = agent.Agent(maxi)
                     mutierter_agent.mutation(1, 10, 30)
                     score[0] += 1
                     self.waiting.append(mutierter_agent.copy())
                     self.waiting.append(maxi.copy())
                 elif result == -1:
                     scorestring += "O"
-                    mutierter_agent = agent2.Agent2(mini)
+                    mutierter_agent = agent.Agent(mini)
                     mutierter_agent.mutation(1, 10, 30)
                     self.waiting.append(mutierter_agent.copy())
                     self.waiting.append(mini.copy())
@@ -93,37 +85,45 @@ class Oekosystem:
 
             for agentss in self.agents:
                 agentss.score = 0
-            for j in range(10):
+            # self.neo.score = 0
+            for j in range(20):
                 random.shuffle(self.agents)
-                for k in range(50):
+                for k in range(500):
                     # two agents are playing against each other
-                    result = self.play(self.agents[k], self.agents[50 + k])
+                    result = self.play(self.agents[k], self.agents[500 + k])
                     if result == 1:
                         self.agents[k].score += 2
                         all_score[0] += 1
                     elif result == -1:
-                        self.agents[50 + k].score += 2
+                        self.agents[500 + k].score += 2
                         all_score[1] += 1
                     else:
                         self.agents[k].score += 1
-                        self.agents[50 + k].score += 1
+                        self.agents[500 + k].score += 1
                         all_score[2] += 1
 
             self.agents.sort(key=lambda x: x.score)
             for i in range(len(self.agents)):
                 self.agents[i].age += 1
 
+            self.agents[999].save_weights('./weight_save.txt')
+
             if season % 10 == 0:
                 print("\n\n\n Saison: " + str(season))
                 gamerecorder = game.Game()
-                self.play(self.agents[99], self.agents[98], gamerecorder)
+                self.play(self.agents[999], self.agents[998], gamerecorder)
                 gamerecorder.print_out()
-                print("Score: " + str(self.agents[99].score) + "   Age: " + str(self.agents[99].age))
+                print("Score: " + str(self.agents[998].score) + "   Age: " + str(self.agents[998].age))
+                print("Score: " + str(self.agents[999].score) + "   Age: " + str(self.agents[999].age))
                 print("\n Season Score: " + str(all_score))
+
             # kick noobs
-            for s in range(int(len(self.agents) * 0.2)):
-                self.agents[s] = agent2.Agent2(self.agents[len(self.agents) - s - 1])
-                self.agents[s].mutation(5, 5, 15)
+            for s in range(int(len(self.agents) * 0.1)):
+                self.agents[s] = agent.Agent(self.agents[len(self.agents) - s - 1])
+                self.agents[s].mutation(1, 2, 2)
+
+            for mitte in range(int(len(self.agents) * 0.1), int(len(self.agents) * 0.6)):
+                self.agents[mitte].mutation(0, 1, 1)
 
             season += 1
 
@@ -144,6 +144,6 @@ class Oekosystem:
         for agent in self.agents:
             agent.mutation(2, 3, 5)
 
-
-oko = Oekosystem()
-oko.liga()
+if __name__ == '__main__':
+    oko = Oekosystem()
+    oko.liga()

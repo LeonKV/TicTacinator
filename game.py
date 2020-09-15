@@ -1,5 +1,3 @@
-import numpy;
-
 class Game:
 
     def __init__(self):
@@ -10,7 +8,7 @@ class Game:
 
     def print_out(self):
         for move in self.moves:
-            for n,i in enumerate(move):
+            for n, i in enumerate(move):
                 if(i == 0):
                     move[n] = " "
                 if(i == 1):
