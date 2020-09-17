@@ -11,7 +11,7 @@ class Society(ecosystem.Oekosystem):
         self.neo = player.Neo()
 
     def reach_freedom(self):
-        result = self.play(self.neo, self.agent_smith)
+        result = self.play(self.agent_smith, self.neo)
         if result == 1:
             print('Matrix is doomed')
         elif result == -1:

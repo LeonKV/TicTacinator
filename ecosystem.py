@@ -86,7 +86,7 @@ class Oekosystem:
             for agentss in self.agents:
                 agentss.score = 0
             # self.neo.score = 0
-            for j in range(20):
+            for j in range(50):
                 random.shuffle(self.agents)
                 for k in range(500):
                     # two agents are playing against each other
