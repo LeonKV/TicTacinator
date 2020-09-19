@@ -8,9 +8,8 @@ class Oekosystem:
     def __init__(self):
         self.agents = []
         self.waiting = []
-        for _ in range(1000):
+        for _ in range(100):
             self.agents.append(agent.Agent())
-        # self.neo = player.Neo()
         self.echo = True
 
     def play(self, max, min, gamerecorder = None):
@@ -80,7 +79,8 @@ class Oekosystem:
 
     def liga(self):
         season = 0
-        while(True):
+        self.reset_score('./score_save.txt')
+        while True:
             all_score = [0, 0, 0]
 
             for agentss in self.agents:
@@ -88,44 +88,46 @@ class Oekosystem:
             # self.neo.score = 0
             for j in range(50):
                 random.shuffle(self.agents)
-                for k in range(500):
+                for k in range(50):
                     # two agents are playing against each other
-                    result = self.play(self.agents[k], self.agents[500 + k])
+                    result = self.play(self.agents[k], self.agents[50 + k])
                     if result == 1:
-                        self.agents[k].score += 2
+                        self.agents[k].score += 4
                         all_score[0] += 1
                     elif result == -1:
-                        self.agents[500 + k].score += 2
+                        self.agents[50 + k].score += 5
                         all_score[1] += 1
                     else:
-                        self.agents[k].score += 1
-                        self.agents[500 + k].score += 1
+                        self.agents[k].score += 2
+                        self.agents[50 + k].score += 3
                         all_score[2] += 1
 
             self.agents.sort(key=lambda x: x.score)
             for i in range(len(self.agents)):
                 self.agents[i].age += 1
 
-            self.agents[999].save_weights('./weight_save.txt')
+            self.agents[99].save_setting('./weight_save.txt')
 
             if season % 10 == 0:
                 print("\n\n\n Saison: " + str(season))
                 gamerecorder = game.Game()
-                self.play(self.agents[999], self.agents[998], gamerecorder)
+                self.play(self.agents[99], self.agents[98], gamerecorder)
                 gamerecorder.print_out()
-                print("Score: " + str(self.agents[998].score) + "   Age: " + str(self.agents[998].age))
-                print("Score: " + str(self.agents[999].score) + "   Age: " + str(self.agents[999].age))
+                print("Score: " + str(self.agents[98].score) + "   Age: " + str(self.agents[98].age))
+                print("Score: " + str(self.agents[99].score) + "   Age: " + str(self.agents[99].age))
                 print("\n Season Score: " + str(all_score))
 
             # kick noobs
-            for s in range(int(len(self.agents) * 0.1)):
-                self.agents[s] = agent.Agent(self.agents[len(self.agents) - s - 1])
-                self.agents[s].mutation(1, 2, 2)
+            self.agents[0] = agent.Agent()
+            for s in range(int(len(self.agents) * 0.01), int(len(self.agents) * 0.5)):
+                self.agents[s] = agent.Agent(self.agents[len(self.agents) - 1])
+                self.agents[s].mutation(1, 2, 10)
 
-            for mitte in range(int(len(self.agents) * 0.1), int(len(self.agents) * 0.6)):
-                self.agents[mitte].mutation(0, 1, 1)
+            # for mitte in range(int(len(self.agents) * 0.1), int(len(self.agents) * 0.6)):
+            #    self.agents[mitte].mutation(0, 0, 0)
 
             season += 1
+            self.save_score('./score_save.txt', all_score)
 
     def winner(self, v):
         for i in range(3):
@@ -143,6 +145,20 @@ class Oekosystem:
     def minimutate(self):
         for agent in self.agents:
             agent.mutation(2, 3, 5)
+
+    def reset_score(self, file):
+        f = open(file, 'w')
+        f.write('[0, 0, 0]')
+        f.close()
+
+    def save_score(self, file, score):
+        f = open(file, 'r')
+        save_data = f.read() + '\n' + str(score)
+        f.close()
+        f = open(file, 'w')
+        f.write(save_data)
+        f.close()
+
 
 if __name__ == '__main__':
     oko = Oekosystem()
