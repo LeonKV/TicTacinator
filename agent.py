@@ -26,7 +26,7 @@ class Agent:
                         l[i].append(ran.uniform(-1, 1))
                 self.weights.append(copy.deepcopy(l))
 
-            self.normalisation()
+            #self.normalisation()
 
         else:
             self.n = agent.n
@@ -121,7 +121,7 @@ class Agent:
             self.reset()
         for _ in range(c):
             self.change()
-        self.normalisation()
+        #self.normalisation()
 
     def convert_d2s(self, v):
         vnew = []
@@ -150,15 +150,15 @@ class Agent:
             if v[i] == 0:
                 vnew.append(0)
                 vnew.append(0)
-                vnew.append(1)
+                vnew.append(0.1)
         return vnew
 
-agent = Agent([15, 15])
-agent.normalisation()
+#agent = Agent([15, 15])
+#agent.normalisation()
 #print(agent.weights1)
 #print(agent.weights2)
-agent2 = Agent(0, agent)
-agent2.mutation(5, 10, 15)
+#agent2 = Agent(0, agent)
+#agent2.mutation(5, 10, 15)
 #print(numpy.matmul(agent.weights1, [1, 0, 0, 1, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]))
-print(agent.move_x([1, 0, 0, 1, 1, 0, -1, 0, -1]))
+#print(agent.move_x([1, 0, 0, 1, 1, 0, -1, 0, -1]))
 # agent.reset()

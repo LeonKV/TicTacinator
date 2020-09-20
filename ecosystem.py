@@ -10,7 +10,7 @@ class Oekosystem:
         self.agents = []
         self.waiting = []
         for _ in range(100):
-            self.agents.append(agent.Agent([30, 30]))
+            self.agents.append(agent.Agent([50, 50]))
         self.echo = True
 
     def deathmatch(self, max, min):
@@ -120,12 +120,90 @@ class Oekosystem:
                 gamerecorder.print_out()
                 print("Score: " + str(self.agents[99].score) + "   Age: " + str(self.agents[99].age))
                 print("\n Season Score: " + str(all_score))
+
+                self.check_better_than_chance()
+
             # kick noobs
-            for s in range(int(len(self.agents) * 0.2)):
+            av_age = 0
+            max_age = 0
+            for s in range(int(len(self.agents) * 0.1)):
+                av_age += self.agents[s].age * (1 / (0.1 * len(self.agents)))
+                if self.agents[s].age > max_age:
+                    max_age = self.agents[s].age
                 self.agents[s] = agent.Agent(0, self.agents[len(self.agents) - s - 1])
-                self.agents[s].mutation(5, 5, 15)
+                self.agents[s].mutation(15, 100, 200)
+
+            for s in range(int(len(self.agents) * 0.2)):
+                self.agents[s + int(len(self.agents) * 0.1)].mutation(3, 50, 150)
+
+
+            if season % 10 == 0:
+                print("av. age kicked: " + str(av_age) + " & max age: " + str(max_age))
 
             season += 1
+
+    def check_better_than_chance(self):
+        wins = 0
+        draws = 0
+        agent = self.agents[50]
+        for i in range(50):
+            res = self.play_rand_x(agent)
+            if res == 1:
+                wins += 1
+            if res == 0:
+                draws += 1
+        for i in range(50):
+            res = self.play_rand_o(agent)
+            if res == -1:
+                wins += 1
+            if res == 0:
+                draws += 1
+        print("Average Bot wins " + str(wins) + " and draws " + str(draws) + " of 100 games against random play")
+        print("Score: " + str(wins + 0.5 * draws))
+
+
+            
+    def play_rand_x(self, agent, gamerecorder = None):
+        board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        for i in range(9):
+            if i % 2 == 0:
+                board[agent.move_x(board)] = 1
+                if gamerecorder != None:
+                    gamerecorder.add_move(board.copy())
+                if self.winner(board):
+                    return 1
+            else:
+                move = random.randint(0,8)
+                while(board[move] != 0):
+                    move = random.randint(0,8)
+                board[move] = -1
+                if gamerecorder != None:
+                    gamerecorder.add_move(board.copy())
+                if self.winner(board):
+                    return -1
+        return 0
+
+    def play_rand_o(self, agent, gamerecorder = None):
+        board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        for i in range(9):
+            if i % 2 == 0:
+                move = random.randint(0,8)
+                while(board[move] != 0):
+                    move = random.randint(0,8)
+                board[move] = 1
+                if gamerecorder != None:
+                    gamerecorder.add_move(board.copy())
+                if self.winner(board):
+                    return 1
+            else:
+                board[agent.move_o(board)] = -1
+                if gamerecorder != None:
+                    gamerecorder.add_move(board.copy())
+                if self.winner(board):
+                    return -1
+        return 0
+
+
 
     def winner(self, v):
         for i in range(3):
