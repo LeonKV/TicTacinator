@@ -1,100 +1,121 @@
 import numpy
 import random
+import copy
 
 
 class Agent:
 
-    def __init__(self, agent = None):
+    def __init__(self, hidden_layers, agent = None):
+        self.age = 0
+        self.weights = []
+        self.size = []
+
         if agent == None:
+
+            self.n = len(hidden_layers) + 1
+
+            self.initiate_size(hidden_layers)
+
             ran = random.Random()
-            self.weights1 = numpy.eye(9)
-            for i in range(9):
-                for j in range(9):
-                    self.weights1[i][j] = ran.uniform(-1, 1)
 
-            self.weights2 = numpy.eye(9)
-            for i in range(9):
-                for j in range(9):
-                    self.weights2[i][j] = ran.uniform(-1, 1)
+            for size in self.size:
+                l = []
+                for i in range(size[1]):
+                    l.append([])
+                    for j in range(size[0]):
+                        l[i].append(ran.uniform(-1, 1))
+                self.weights.append(copy.deepcopy(l))
+
+            self.normalisation()
+
         else:
-            self.weights1 = agent.weights1.copy()
-            self.weights2 = agent.weights2.copy()
+            self.n = agent.n
+            self.size = copy.deepcopy(agent.size)
+            for i in range(agent.n):
+                self.weights.append(copy.deepcopy(agent.weights[i]))
 
-    def move_max(self, input):
-        options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, input)))
+    def initiate_size(self, hidden_layers):
+        self.size.append([])
+        self.size[0].append(27)
+        for i in range(len(hidden_layers)):
+            self.size[i].append(hidden_layers[i])
+            self.size.append([])
+            self.size[i + 1].append(hidden_layers[i])
+        self.size[len(hidden_layers)].append(18)
+
+
+    def move_x(self, input):
+        options = self.get_options(input)
         index = 0
         max = -1000
 
         for i in range(9):
             if input[i] == 0:
-                if options[i] > max:
+                if options[2 * i] > max:
                     max = options[i]
+                    index = i
+        return index
 
-        for i in options:
-            if i == max:
-                return index
-            index += 1
+    def copy(self):
+        copy_agent = Agent2()
+        copy_agent.weights1 = self.weights1.copy()
+        copy_agent.weights2 = self.weights2.copy()
+        copy_agent.id = self.id
+        return copy_agent
 
-    def move_min(self, input):
-        options = numpy.matmul(self.weights2, (numpy.matmul(self.weights1, input)))
+    def move_o(self, input):
+        options = self.get_options(input)
         index = 0
-        min = 1000
+        max = -1000
 
         for i in range(9):
             if input[i] == 0:
-                if options[i] < min:
-                    min = options[i]
+                if options[2 * i + 1] > max:
+                    max = options[i]
+                    index = i
+        return index
 
-        for i in options:
-            if i == min:
-                return index
-            index += 1
+    def get_options(self, input):
+        converted_input = self.convert_s2t(input)
+        res = converted_input
+        for i in range(self.n):
+            res = numpy.matmul(self.weights[i], res)
+        return res
 
     def normalisation(self):
-        for i in range(9):
-            sum = 0
-            for j in range(9):
-                sum += abs(self.weights1[i][j])
-            for j in range(9):
-                self.weights1[i][j] /= sum
-
-        for i in range(9):
-            sum = 0
-            for j in range(9):
-                sum += abs(self.weights2[i][j])
-            for j in range(9):
-                self.weights2[i][j] /= sum
+        for size in self.size:
+            weights = self.weights[self.size.index(size)]
+            for i in range(size[1]):
+                sum = 0
+                for j in range(size[0]):
+                    sum += abs(weights[i][j])
+                if sum == 0:
+                    sum = 1
+                for j in range(size[0]):
+                    weights[i][j] /= sum
+            self.weights[self.size.index(size)] = weights # Vielleicht unnoetig kp verstehe nicht wie Python funktioniert
 
     def reset(self):
-        randWeight = random.randint(1, 2)
-        x = random.randint(0, 8)
-        y = random.randint(0, 8)
-        if randWeight == 1:
-            self.weights1[x][y] = random.uniform(-0.5, 0.5)
-        else:
-            self.weights2[x][y] = random.uniform(-0.5, 0.5)
+        randWeight = random.randint(0, self.n - 1)
+        x = random.randint(0, self.size[randWeight][1] - 1)
+        y = random.randint(0, self.size[randWeight][0] - 1)
+        self.weights[randWeight][x][y] = random.uniform(-0.5, 0.5)
 
     def delete(self):
-        randWeight = random.randint(1, 2)
-        x = random.randint(0, 8)
-        y = random.randint(0, 8)
-        if randWeight == 1:
-            self.weights1[x][y] = 0
-        else:
-            self.weights2[x][y] = 0
+        randWeight = random.randint(0, self.n - 1)
+        x = random.randint(0, self.size[randWeight][1] - 1)
+        y = random.randint(0, self.size[randWeight][0] - 1)
+        self.weights[randWeight][x][y] = 0
 
     def change(self):
-        randWeight = random.randint(1, 2)
-        x = random.randint(0, 8)
-        y = random.randint(0, 8)
-        a = random.uniform(-0.05, 0.05)
-        if randWeight == 1:
-            self.weights1[x][y] += a
-        else:
-            self.weights2[x][y] += a
+        randWeight = random.randint(0, self.n - 1)
+        x = random.randint(0, self.size[randWeight][1] - 1)
+        y = random.randint(0, self.size[randWeight][0] - 1)
+        self.weights[randWeight][x][y] += random.uniform(-0.05, 0.05)
 
     def mutation(self, a, b, c):
-        for _ in range(a):
+        # a,b,c gegeben als %-Wert im Bezug auf Anzahl der hidden layer
+        for _ in range(int(a)):
             self.delete()
         for _ in range(b):
             self.reset()
@@ -102,9 +123,42 @@ class Agent:
             self.change()
         self.normalisation()
 
-# agent = Agent()
-# agent.normalisation()
-# agent2 = Agent(agent)
-# agent2.mutation(5, 10, 15)
-# print(agent2.moveX([1, 0, 0, -1, 1, 0, -1, 0, 0]))
+    def convert_d2s(self, v):
+        vnew = []
+        for i in range(9):
+            i *= 2
+            if v[i] == 1:
+                vnew.append(1)
+            elif v[i + 1] == 1:
+                vnew.append(-1)
+            else:
+                vnew.append(0)
+        return vnew
+
+    def convert_s2t(self, v):
+        vnew = []
+        for i in range(9):
+            if v[i] == 1:
+                vnew.append(1)
+                vnew.append(0)
+                vnew.append(0)
+
+            if v[i] == -1:
+                vnew.append(0)
+                vnew.append(1)
+                vnew.append(0)
+            if v[i] == 0:
+                vnew.append(0)
+                vnew.append(0)
+                vnew.append(1)
+        return vnew
+
+agent = Agent([15, 15])
+agent.normalisation()
+#print(agent.weights1)
+#print(agent.weights2)
+agent2 = Agent(0, agent)
+agent2.mutation(5, 10, 15)
+#print(numpy.matmul(agent.weights1, [1, 0, 0, 1, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]))
+print(agent.move_x([1, 0, 0, 1, 1, 0, -1, 0, -1]))
 # agent.reset()
