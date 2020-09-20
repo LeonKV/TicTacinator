@@ -52,7 +52,7 @@ class Agent:
         for i in range(9):
             if input[i] == 0:
                 if options[2 * i] > max:
-                    max = options[i]
+                    max = options[2 * i]
                     index = i
         return index
 
@@ -71,7 +71,7 @@ class Agent:
         for i in range(9):
             if input[i] == 0:
                 if options[2 * i + 1] > max:
-                    max = options[i]
+                    max = options[2 * i + 1]
                     index = i
         return index
 
