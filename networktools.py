@@ -12,6 +12,10 @@ class LayerDense:
     def forward(self, inputs):
         self.output = np.matmul(inputs, self.weights) + self.biases
 
+    def forwardReLU(self, inputs):
+        self.forward(inputs)
+        self.output = np.maximum(0, self.output)
+
     def normalisation(self):
         for i in range(self.neurons):
             sum = 0
